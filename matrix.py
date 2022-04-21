@@ -99,7 +99,7 @@ class Matrix:
 
     def __mul__(self, other):
         if isinstance(other, (int, float)):
-            res = Matrix(self.size[0], m=self.size[1])
+            res = deepcopy(self)
             for i in range(res.get_size()[0]):
                 for j in range(res.get_size()[1]):
                     val = self.get_at(i, j) * other
@@ -125,7 +125,7 @@ class Matrix:
 
     def __sub__(self, other):
         if isinstance(other, (int, float)):
-            res = Matrix(self.size[0], m=self.size[1])
+            res = deepcopy(self)
             for i in range(res.get_size()[0]):
                 for j in range(res.get_size()[1]):
                     val = self.get_at(i, j) - other
@@ -139,7 +139,7 @@ class Matrix:
             print("Cannot sub matrices with given sizes", self.get_size(), other.get_size())
             return None
 
-        res = Matrix(self.get_size()[0], m=self.get_size()[1])
+        res = deepcopy(self)
         for i in range(res.get_size()[0]):
             for j in range(res.get_size()[1]):
                 value = self.get_at(i, j) - other.get_at(i, j)
@@ -156,7 +156,7 @@ class Matrix:
 
     def __add__(self, other):
         if isinstance(other, (int, float)):
-            res = Matrix(self.size[0], m=self.size[1])
+            res = deepcopy(self)
             for i in range(res.get_size()[0]):
                 for j in range(res.get_size()[1]):
                     val = self.get_at(i, j) + other
@@ -170,7 +170,7 @@ class Matrix:
             print("Cannot sub matrices with given sizes", self.get_size(), other.get_size())
             return None
 
-        res = Matrix(self.get_size()[0], m=self.get_size()[1])
+        res = deepcopy(self)
         for i in range(res.get_size()[0]):
             for j in range(res.get_size()[1]):
                 value = self.get_at(i, j) + other.get_at(i, j)
@@ -207,8 +207,23 @@ def diagonal_solver(a: Matrix, b: Matrix):
     return results
 
 
-if __name__ == "__main__":
-    print(diagonal_solver(Matrix(from_list=[[2, 0],
-                                            [0, 7]]), Matrix(from_list=[[0, 1],
-                                                                        [5, 0]])))
-    pass
+def forward_substitution_solver(a: Matrix, b: Matrix):
+    # TODO check if A is triangular
+
+    if a.get_size()[0] != b.get_size()[0]:
+        print("Sizes of matrices does not match!")
+        return None
+
+    results = Matrix(n=b.get_size()[0], m=b.get_size()[1])
+    for c in range(b.get_size()[1]):
+        col = b.get_col(c)
+
+        res = []
+        for i in range(a.get_size()[0]):
+            numerator = col[i]
+            for j in range(0, i):
+                numerator -= a.get_at(i, j) * res[j]
+            res.append(numerator/a.get_at(i, i))
+        results.set_col(c, res)
+
+    return results
