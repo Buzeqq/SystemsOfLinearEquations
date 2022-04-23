@@ -208,7 +208,11 @@ def diagonal_solver(a: Matrix, b: Matrix):
 
 
 def forward_substitution_solver(a: Matrix, b: Matrix):
-    # TODO check if A is triangular
+    for i in range(a.get_size()[0]):
+        for j in range(i + 1, a.get_size()[1]):
+            if a.get_at(i, j) != 0:
+                print("Matrix A is not triangular lower!")
+                return None
 
     if a.get_size()[0] != b.get_size()[0]:
         print("Sizes of matrices does not match!")
