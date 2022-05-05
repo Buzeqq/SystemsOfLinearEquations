@@ -1,6 +1,4 @@
-from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
-import time
 
 
 class Matrix:
@@ -128,30 +126,6 @@ class Matrix:
                     value += self[i, k] * other[k, j]
 
                 res[i, j] = value
-        return res
-
-    def threaded_mul(self, other):
-        if not isinstance(other, Matrix):
-            return None
-
-        if self.cols != other.rows:
-            print("Cannot mul matrices with given sizes", self.size, other.size)
-            return None
-
-        res = Matrix(size=(self.cols, other.cols))
-
-        def _mul_col(n: int):
-            for j in range(res.cols):
-                value = 0
-                for k in range(self.cols):
-                    value += self[n, k] * other[k, j]
-
-                # print(value)
-                res[n, j] = value
-
-        with ThreadPoolExecutor(max_workers=7) as exe:
-            exe.map(_mul_col, [i for i in range(res.rows)])
-
         return res
 
     def __sub__(self, other):
